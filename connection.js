@@ -4,14 +4,41 @@ const cTable = require('console.table');
 
 const connection = mysql.createConnection({
     host: 'localhost',
-
     port: 3306,
-
     user: 'root',
-
     password: 'password',
     database: 'tracker_db',
 });
+
+//Create department
+const createDepartment = (name) => {
+    const query = connection.query(
+        'INSERT INTO department SET ?',
+        {
+            name: name
+        },
+        (err, res) => {
+            if (err) throw err;
+            console.log(`${res.affectedRows} role inserted!\n`);
+        }
+    )
+}
+
+//Create role
+const createRole = (title, salary, department) => {
+    const query = connection.query(
+        'INSERT INTO role SET ?',
+        {
+            title: title,
+            salary: salary,
+            department_id: department
+        },
+        (err, res) => {
+            if (err) throw err;
+            console.log(`${res.affectedRows} role inserted!\n`);
+        }
+    )
+}
 
 //Create employee
 const createEmployee = (fName, lName, role, manager) => {
@@ -62,8 +89,8 @@ const updateEmployee = (id) => {
 }
 
 //View a table
-const viewTable = (table) => {
-    const selectionString = 'SELECT * FROM ' + table;
+const viewTable = () => {
+    const selectionString = 'SELECT employee.id, first_name, last_name, title FROM role JOIN role ON employee.role_id = role.id FROM department JOIN department ON employee.department_id = department.id';
     connection.query(selectionString, (err, res) => {
         if (err) throw err;
         console.table(res);
@@ -73,5 +100,8 @@ const viewTable = (table) => {
 connection.connect((err) => {
     if (err) throw err;
     console.log(`connected as id ${connection.threadId}`);
-    viewTable('employee')
+    createEmployee('Tyler', "Fabian", 1, 1);
+    createRole('Programmer', 45.5, 1)
+    createDepartment('HR')
+    viewTable()
 });
