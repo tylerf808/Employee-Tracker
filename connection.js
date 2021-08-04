@@ -17,13 +17,7 @@ const createDepartment = (name) => {
         'INSERT INTO department SET ?',
         {
             name: name
-        },
-        (err, res) => {
-            if (err) throw err;
-            console.log(`${res.affectedRows} department inserted!\n`);
-            console.log('')
-        }
-    )
+        })
 }
 
 //Create role
@@ -34,13 +28,7 @@ const createRole = (title, salary, department) => {
             title: title,
             salary: salary,
             department_id: department
-        },
-        (err, res) => {
-            if (err) throw err;
-            console.log(`${res.affectedRows} role inserted!\n`);
-            console.log('')
-        }
-    )
+        })
 }
 
 //Create employee
@@ -52,11 +40,7 @@ const createEmployee = (fName, lName, role, manager) => {
             last_name: lName,
             role_id: role,
             manager_id: manager
-        },
-        (err, res) => {
-            if (err) throw err;
-        }
-    );
+        })
 };
 
 //Delete Employee
@@ -70,42 +54,22 @@ const updateEmployee = (role, id) => {
         },
         {
             id: id,
-        }
-        ],
-        (err, res) => {
-            if (err) throw err;
-            console.log(`${res.affectedRows} employees role updated!\n`);
-            console.log('')
-        }
-    );
+        }]);
 }
 
 //View a table
 const viewTable = () => {
-    const selectionString = "SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name,  '  ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;";
-    connection.query(selectionString, (err, res) => {
-        if (err) throw err;
-        console.log('')
-        console.table(res);
-    });
+    connection.query(`SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name,  '  ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`)
 }
 
 //View Departments
 const viewDepartments = () => {
-    connection.query('SELECT * FROM department', (err, res) => {
-        if (err) throw err;
-        console.log('')
-        console.table(res)
-    })
+    connection.query('SELECT * FROM department')
 }
 
 //View Roles
 const viewRoles = () => {
-    connection.query('SELECT * FROM role', (err, res) => {
-        if (err) throw err;
-        console.log('')
-        console.table(res)
-    })
+    connection.query('SELECT * FROM role')
 }
 
 //Update Manager
