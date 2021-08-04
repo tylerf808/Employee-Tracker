@@ -5,7 +5,7 @@ VALUES ("Will", "Riker", 2,3);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
 VALUES ("Geordi", "La Forge", 1,3);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
-VALUES ("Jean-Luc", "Picard", 2);
+VALUES ("Jean-Luc", "Picard", 2, NULL);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
 VALUES ("Sarah", "Lewis", 3,9);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
@@ -17,9 +17,9 @@ VALUES ("Tasha", "Yar", 3,10);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
 VALUES ("Ro", "Laren", 3,10);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
-VALUES ("Miles", "O Brien", 1);
+VALUES ("Miles", "O Brien", 1, NULL);
 INSERT INTO employee (first_name, last_name, role_id,manager_id)
-VALUES ("Guinan", "N/A", 3);
+VALUES ("Guinan", "N/A", 3, NUll);
 
 INSERT INTO role (title, salary, department_id)
 VALUES ("Software Engineer", 90000, 4);

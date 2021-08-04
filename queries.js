@@ -47,7 +47,7 @@ const updateEmployee = (role, id) => {
 }
 
 //View a table
-const viewTable = () => {
+const viewAll = () => {
     return connection.query(`SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name,  '  ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`)
 }
 
@@ -106,24 +106,8 @@ const getManagersList = () => {
     );
 }
 
-//Update employee's manager
-const updateEmployeeManager = (manager, id) => {
-    return connection.query(
-      `UPDATE employee SET ? where ?`,
-      [
-          {
-              manager_id: manager
-          },
-          {
-            id: id
-          }
-      ]
-    );
-}
-
 module.exports = {
     createRole,
-    updateEmployeeManager,
     getManagersList,
     findAllEmployeesByManager,
     updateEmployeeManager,
@@ -131,5 +115,7 @@ module.exports = {
     findAllEmployeesByDepartment,
     viewDepartments,
     viewRoles,
-    createEmployee
+    createEmployee,
+    viewAll,
+    updateEmployee
 }

@@ -1,9 +1,10 @@
 const inquirer = require('inquirer');
 const ctable = require('console.table');
 const mysql = require('mysql');
+const connection = require('./connection')
+
 const {
     createRole,
-    updateEmployeeManager,
     getManagersList,
     findAllEmployeesByManager,
     updateEmployeeManager,
@@ -11,12 +12,14 @@ const {
     findAllEmployeesByDepartment,
     viewDepartments,
     viewRoles,
+    viewAll,
     createEmployee
 } = require('./queries')
 
 async function viewEmployees() {
-    let employees = await findAllEmployees();
-    let table = ctable.getTable([], employees);
+    let employees = await viewAll();
+    let table = console.table(employees);
     console.log(table);
-  }
+}
 
+viewEmployees();
