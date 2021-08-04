@@ -45,7 +45,6 @@ const createRole = (title, salary, department) => {
 
 //Create employee
 const createEmployee = (fName, lName, role, manager) => {
-    console.log('Inserting a new employee...\n');
     const query = connection.query(
         'INSERT INTO employee SET ?',
         {
@@ -56,20 +55,22 @@ const createEmployee = (fName, lName, role, manager) => {
         },
         (err, res) => {
             if (err) throw err;
-            console.log(`${res.affectedRows} Employee inserted!\n`);
-            console.log('')
         }
     );
 };
 
+//Delete Employee
+
 //Update Employee role
-const updateEmployee = (id) => {
+const updateEmployee = (role, id) => {
     const query = connection.query(
         'UPDATE employee SET ? WHERE ?',
-        [
-            {
-                id: id,
-            }
+        [{
+            role_id: role
+        },
+        {
+            id: id,
+        }
         ],
         (err, res) => {
             if (err) throw err;
@@ -81,7 +82,7 @@ const updateEmployee = (id) => {
 
 //View a table
 const viewTable = () => {
-    const selectionString = "SELECT employee.id, first_name, last_name, title, salary, name FROM employee JOIN role ON employee.role_id = role.id JOIN department ON role.department_id = department.id";
+    const selectionString = "SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name,  '  ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;";
     connection.query(selectionString, (err, res) => {
         if (err) throw err;
         console.log('')
@@ -96,6 +97,60 @@ const viewDepartments = () => {
         console.log('')
         console.table(res)
     })
+}
+
+//View Roles
+const viewRoles = () => {
+    connection.query('SELECT * FROM role', (err, res) => {
+        if (err) throw err;
+        console.log('')
+        console.table(res)
+    })
+}
+
+//Update Manager
+const updateEmployeeManager = (manager, id) => {
+    connection.query(
+        `UPDATE employee SET ? where ?`,
+        [
+            {
+                manager_id: manager
+            },
+            {
+                id: id
+            }
+        ]
+    );
+}
+
+//Find all by department
+const findAllEmployeesByDepartment = (dept) => {
+    connection.query(` SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name, ' ' , manager.last_name) AS manager 
+    FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id
+  WHERE ?`,
+        [{
+            department_id: dept
+        }
+        ]);
+};
+
+//Find all by manager
+const findAllEmployeesByManager = (manager) => {
+    connection.query(` SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name, ' ' , manager.last_name) AS manager 
+  FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id
+WHERE ?`,
+        [{
+            manager_id: manager
+        }]);
+};
+
+//Get all managers
+const getManagersList = () => {
+    connection.query(
+        `SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name, ' ' , manager.last_name) AS manager 
+    FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id
+  WHERE employee.manager_id is NULL`
+    );
 }
 
 async function run() {
@@ -115,7 +170,7 @@ async function run() {
                 viewDepartments();
                 break;
             case 'View Roles':
-
+                viewRoles();
                 break;
             case 'Add Employee':
                 const employee = await newEmployeePrompt();
