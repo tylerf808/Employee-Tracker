@@ -57,6 +57,16 @@ function newRole() {
             name: 'role',
             type: 'input',
             message: 'What is the role called?',
+        },
+        {
+            name: 'salary',
+            type: 'input',
+            message: 'What is the roles salary?'
+        },
+        {
+            name: 'department',
+            type: 'input',
+            message:'What is the department?'
         }
     ]).then((answers) => {
         return answers.role;
