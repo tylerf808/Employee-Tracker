@@ -1,6 +1,8 @@
+const connection = require('./connection');
+
 //Create department
 const createDepartment = (name) => {
-    const query = connection.query(
+    return connection.query(
         'INSERT INTO department SET ?',
         {
             name: name
@@ -9,7 +11,7 @@ const createDepartment = (name) => {
 
 //Create role
 const createRole = (title, salary, department) => {
-    const query = connection.query(
+    return connection.query(
         'INSERT INTO role SET ?',
         {
             title: title,
@@ -20,7 +22,7 @@ const createRole = (title, salary, department) => {
 
 //Create employee
 const createEmployee = (fName, lName, role, manager) => {
-    const query = connection.query(
+    return connection.query(
         'INSERT INTO employee SET ?',
         {
             first_name: fName,
@@ -34,7 +36,7 @@ const createEmployee = (fName, lName, role, manager) => {
 
 //Update Employee role
 const updateEmployee = (role, id) => {
-    const query = connection.query(
+    return connection.query(
         'UPDATE employee SET ? WHERE ?',
         [{
             role_id: role
@@ -46,22 +48,22 @@ const updateEmployee = (role, id) => {
 
 //View a table
 const viewTable = () => {
-    connection.query(`SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name,  '  ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`)
+    return connection.query(`SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name,  '  ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`)
 }
 
 //View Departments
 const viewDepartments = () => {
-    connection.query('SELECT * FROM department')
+    return connection.query('SELECT * FROM department')
 }
 
 //View Roles
 const viewRoles = () => {
-    connection.query('SELECT * FROM role')
+    return connection.query('SELECT * FROM role')
 }
 
 //Update Manager
 const updateEmployeeManager = (manager, id) => {
-    connection.query(
+    return connection.query(
         `UPDATE employee SET ? where ?`,
         [
             {
@@ -76,7 +78,7 @@ const updateEmployeeManager = (manager, id) => {
 
 //Find all by department
 const findAllEmployeesByDepartment = (dept) => {
-    connection.query(` SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name, ' ' , manager.last_name) AS manager 
+    return connection.query(` SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name, ' ' , manager.last_name) AS manager 
     FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id
   WHERE ?`,
         [{
@@ -87,7 +89,7 @@ const findAllEmployeesByDepartment = (dept) => {
 
 //Find all by manager
 const findAllEmployeesByManager = (manager) => {
-    connection.query(` SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name, ' ' , manager.last_name) AS manager 
+    return connection.query(` SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name, ' ' , manager.last_name) AS manager 
   FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id
 WHERE ?`,
         [{
@@ -97,7 +99,7 @@ WHERE ?`,
 
 //Get all managers
 const getManagersList = () => {
-    connection.query(
+    return connection.query(
         `SELECT employee.id, employee.first_name,employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name, ' ' , manager.last_name) AS manager 
     FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id
   WHERE employee.manager_id is NULL`
@@ -106,7 +108,7 @@ const getManagersList = () => {
 
 //Update employee's manager
 const updateEmployeeManager = (manager, id) => {
-    connection.query(
+    return connection.query(
       `UPDATE employee SET ? where ?`,
       [
           {
@@ -117,4 +119,17 @@ const updateEmployeeManager = (manager, id) => {
           }
       ]
     );
+}
+
+module.exports = {
+    createRole,
+    updateEmployeeManager,
+    getManagersList,
+    findAllEmployeesByManager,
+    updateEmployeeManager,
+    createDepartment,
+    findAllEmployeesByDepartment,
+    viewDepartments,
+    viewRoles,
+    createEmployee
 }
