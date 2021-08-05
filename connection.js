@@ -59,7 +59,7 @@ const updateEmployee = (role, id) => {
 
 async function updateEmployeesRole() {
 
-    const updateRolePrompt = [
+    inquirer.prompt([
         {
             type: "input",
             name: "employee",
@@ -70,8 +70,7 @@ async function updateEmployeesRole() {
             name: "role",
             message: "Which role id would like to change to?",
         },
-    ];
-    inquirer.prompt(updateRolePrompt).then((answer) => {
+    ]).then((answer) => {
 
         async function updateEmployeeByRole(selectedRole, selectedEmployeeId) {
             await updateEmployee(
@@ -127,6 +126,8 @@ const getManagersList = () => {
 
 //Add Employee
 async function addEmployee() {
+
+    
 
     inquirer.prompt([
         {
