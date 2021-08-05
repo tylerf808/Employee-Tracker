@@ -31,8 +31,8 @@ const createRole = (title, salary, department) => {
 }
 
 //Create employee
-const createEmployee = (fName, lName, role, manager) => {
-    connection.query(
+const createEmployee = async (fName, lName, role, manager) => {
+    await connection.query(
         'INSERT INTO employee SET ?',
         {
             first_name: fName,
@@ -54,11 +54,41 @@ const updateEmployee = (role, id) => {
         {
             id: id,
         }]);
+
+}
+
+async function updateEmployeesRole() {
+
+    const updateRolePrompt = [
+        {
+            type: "input",
+            name: "employee",
+            message: "Enter the id of the employee you would like to update",
+        },
+        {
+            type: "input",
+            name: "role",
+            message: "Which role id would like to change to?",
+        },
+    ];
+    inquirer.prompt(updateRolePrompt).then((answer) => {
+
+        async function updateEmployeeByRole(selectedRole, selectedEmployeeId) {
+            await updateEmployee(
+                selectedRole,
+                selectedEmployeeId
+            );
+            console.log("Employee Updated!");
+            start();
+        }
+        updateEmployeeByRole(answer.employee, answer.role);
+    });
 }
 
 //View a table
 const viewAll = async () => {
-    await connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name,  '  ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`,
+
+    connection.query(`SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary,CONCAT(manager.first_name,  '  ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;`,
         (err, result) => {
             if (err) throw err;
             console.table(result)
@@ -66,16 +96,16 @@ const viewAll = async () => {
 }
 
 //View Departments
-const viewDepartments = () => {
-    connection.query('SELECT * FROM department', (err, result) => {
+const viewDepartments = async () => {
+    await connection.query('SELECT * FROM department', (err, result) => {
         if (err) throw err;
         console.table(result)
     })
 }
 
 //View Roles
-const viewRoles = () => {
-    connection.query('SELECT * FROM role', (err, result) => {
+const viewRoles = async () => {
+    await connection.query('SELECT * FROM role', (err, result) => {
         if (err) throw err;
         console.table(result)
     })
@@ -95,53 +125,96 @@ const getManagersList = () => {
         })
 }
 
+//Add Employee
+async function addEmployee() {
 
-//Main function to run
-async function run() {
+    const addEmployeePrompt = [
+        {
+            type: "input",
+            name: "firstname",
+            message: "Please add your first name",
+        },
+        {
+            type: "input",
+            name: "lastname",
+            message: "Please add your last name",
+        },
+        {
+            type: "input",
+            name: "role",
+            message: "Please add your role id"
+        },
+        {
+            type: "input",
+            name: "manager",
+            message: "Please add your manager id"
+        },
+    ];
+    inquirer.prompt(addEmployeePrompt).then((answer) => {
+        async function employeeInsert(firstName, lastName, role, manager) {
+            await createEmployee(firstName, lastName, role, manager);
+        }
+        employeeInsert(
+            answer.firstname,
+            answer.lastname,
+            answer.role,
+            answer.manager
+        );
+
+        start();
+    });
+}
+
+connection.connect((err) => {
+    if (err) throw err;
+
+});
+
+const start = async () => {
     inquirer
         .prompt({
-            name: "choice",
+            name: "opening",
             type: "list",
-            message: "What would you like to do?",
+            message: "Welcome! What would you like to do?",
             choices: [
                 "View all employees",
-                "View departments",
-                "View Roles",
                 "Add employee",
-                "Add department",
-                "Add role",
+                "View departments",
+                "View roles",
+                "Add a role",
+                "add a department",
                 "Update employee by role",
-                "Exit",
+                "Exit Application",
             ],
         })
-        .then((answer) => {
-            switch (answer.choice) {
+        .then(async (answer) => {
+            switch (answer.opening) {
                 case "View all employees":
                     viewAll();
-                   
+                    start();
                     break;
 
-                case "View departments":
+                case "view departments ":
                     viewDepartments()
-                   
-                    break;
 
-                case "View Roles":
-                    viewRoles()
-                   
                     break;
-
                 case "Add employee":
-                    createEmployee();
-                    
+                    addEmployee()
                     break;
-                case "Create role":
+                case "View roles ":
+                    viewRoles()
+                    break;
+
+                case "Add a role ":
                     createRole()
-                  
                     break;
+
+                case "Add department ":
+                    createDepartment()
+                    break;
+
                 case "Update employee by role":
-                    updateEmployee();
-                   
+                    updateEmployeesRole();
                     break;
 
                 case "Exit Application":
@@ -149,12 +222,6 @@ async function run() {
                     break;
             }
         });
-    run()
 };
 
-connection.connect((err) => {
-    if (err) throw err;
-
-});
-
-run();
+start()
