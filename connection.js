@@ -128,7 +128,7 @@ const getManagersList = () => {
 //Add Employee
 async function addEmployee() {
 
-    const addEmployeePrompt = [
+    inquirer.prompt([
         {
             type: "input",
             name: "firstname",
@@ -149,17 +149,11 @@ async function addEmployee() {
             name: "manager",
             message: "Please add your manager id"
         },
-    ];
-    inquirer.prompt(addEmployeePrompt).then((answer) => {
+    ]).then((answer) => {
         async function employeeInsert(firstName, lastName, role, manager) {
             await createEmployee(firstName, lastName, role, manager);
         }
-        employeeInsert(
-            answer.firstname,
-            answer.lastname,
-            answer.role,
-            answer.manager
-        );
+        employeeInsert(answer.firstname, answer.lastname, answer.role, answer.manager);
 
         start();
     });
